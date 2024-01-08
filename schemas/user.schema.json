@@ -1,0 +1,37 @@
+{
+  "$id": "user",
+  "title": "User",
+  "entity": "users",
+  "type": "object",
+  "properties": {
+    "body": {
+      "type": "string",
+      "label": "Body",
+      "description": "Users name",
+      "component": "longInput"
+    },
+    "title": {
+      "type": "string",
+      "label": "Title",
+      "description": "Your wildest dreams...",
+      "component": "input"
+    },
+    "posts": {
+      "foreign_key": "user_id",
+      "relationship": "has_many",
+      "entity": "posts",
+      "label": "Posts",
+      "type": "array",
+      "items": {
+        "$ref": "post"
+      },
+      "component": "belongsToSelect",
+      "description": "boop"
+    },
+    "id": {
+      "type": "string",
+      "label": "ID"
+    }
+  },
+  "primaryKey": "id"
+}

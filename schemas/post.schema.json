@@ -1,0 +1,28 @@
+{
+  "$id": "post",
+  "title": "Post",
+  "entity": "posts",
+  "type": "object",
+  "properties": {
+    "user": {
+      "foreign_key": "post_id",
+      "entity": "posts",
+      "relationship": "belongs_to",
+      "$ref": "post",
+      "label": "Posts",
+      "component": "belongsToSelect",
+      "description": "boop"
+    },
+    "user_id": {
+      "foreign_key": "post_id",
+      "description": "foreign key that links post to its post",
+      "label": "Foreign Key For Post",
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "label": "ID"
+    }
+  },
+  "primaryKey": "id"
+}
