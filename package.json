@@ -1,7 +1,6 @@
 {
   "author": "luke@ldiebold.com",
   "repository": "https://github.com/quasar-army/lsd-cli",
-  "main": "./dist/index.js",
   "name": "@quasar-army/lsd-cli",
   "homepage": "https://github.com/quasar-army/lsd-cli",
   "files": [
@@ -20,13 +19,26 @@
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md"
   },
-  "version": "0.0.9",
+  "version": "0.0.10",
   "bugs": "https://github.com/quasar-army/lsd-cli/issues",
   "keywords": [
     "oclif"
   ],
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "exports": "./dist/index.js",
   "type": "module",
   "bin": {
     "lsd": "./bin/run.js"
@@ -65,7 +77,8 @@
     "oclif": "^4.1.0",
     "shx": "^0.3.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "unbuild": "^2.0.0"
   },
   "engines": {
     "node": "^18 || ^20"
