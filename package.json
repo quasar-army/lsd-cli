@@ -1,15 +1,16 @@
 {
   "author": "luke@ldiebold.com",
-  "repository": "https://github.com/quasar-army/lsd-cli",
-  "name": "@quasar-army/lsd-cli",
-  "homepage": "https://github.com/quasar-army/lsd-cli",
+  "repository": "https://github.com/quasar-army/blue-cli",
+  "name": "@quasar-army/blue-cli",
+  "homepage": "https://github.com/quasar-army/blue-cli",
   "files": [
     "/bin",
     "/dist",
     "/oclif.manifest.json"
   ],
   "scripts": {
-    "release": "pnpm build && bumpp --tag '@quasar-army/lsd-cli@v%s' && pnpm publish",
+    "blue": "pnpm build && node ./bin/run.js",
+    "release": "pnpm build && bumpp --tag '@quasar-army/blue-cli@v%s' && pnpm publish",
     "build": "shx rm -rf dist && tsc -b",
     "lint": "eslint . --ext .ts",
     "postpack": "shx rm -f oclif.manifest.json",
@@ -19,8 +20,8 @@
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md"
   },
-  "version": "0.0.13",
-  "bugs": "https://github.com/quasar-army/lsd-cli/issues",
+  "version": "0.0.14",
+  "bugs": "https://github.com/quasar-army/blue-cli/issues",
   "keywords": [
     "oclif"
   ],
@@ -29,7 +30,7 @@
   "types": "./dist/index.d.ts",
   "type": "module",
   "bin": {
-    "lsd": "./bin/run.js"
+    "blue": "./bin/run.js"
   },
   "dependencies": {
     "@oclif/core": "^3",
@@ -44,7 +45,7 @@
     "readline": "^1.3.0",
     "wretch": "^2.8.0"
   },
-  "description": "LSD project cli",
+  "description": "blue project cli",
   "devDependencies": {
     "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^3",
@@ -73,8 +74,8 @@
   },
   "license": "MIT",
   "oclif": {
-    "bin": "lsd",
-    "dirname": "lsd",
+    "bin": "blue",
+    "dirname": "blue",
     "commands": "./dist/commands",
     "plugins": [
       "@oclif/plugin-help",
