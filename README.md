@@ -108,4 +108,4 @@ export class User extends BaseUser {
 Now throughout the project, we would only import `User.ts`, never `BaseUser.ts`. Changes to BaseUser can happen freely and `User.ts` will still have the `sayHello` function.
 
 ### Is this necessary?
-To be clear, we have never had to do this pattern in the Quasar Army. We generated models directly. However if we start running into edge cases, we'll start following this pattern to allow for more flexibility.
+To be clear, we have never had to do this pattern in the Quasar Army. We generate models directly. However if we start running into edge cases, we'll follow this pattern to allow for more flexibility.
