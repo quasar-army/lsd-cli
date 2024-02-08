@@ -33,6 +33,8 @@ Now let's see how we can react to changes in our schema...
 ## Configuration
 
 Blue provides hooks that allow us to **immediately** react to changes in the schema!
+
+`blue.config.ts`
 ```ts
 import { config as configureEnv } from 'dotenv'
 
