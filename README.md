@@ -16,7 +16,7 @@ pnpm install @quasar-army/blue-cli
 
 globally (The blue standard uses npm for global dependencies)
 ```sh
-pnpm install -G @quasar-army/blue-cli
+npm install -g @quasar-army/blue-cli
 ```
 
 We can now listen for changes with `blue listen`. We'll likely want to add this to our package.json
