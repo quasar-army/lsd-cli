@@ -1,18 +1,20 @@
 import { config as configureEnv } from 'dotenv'
-import { outputFileSync } from 'fs-extra/esm'
-import { defineConfig } from './dist/types/LsdCliConfig.js'
+import { outputFileSync, removeSync } from 'fs-extra/esm'
 
 configureEnv()
 
-export default defineConfig({
-  sot: {
-    watch: {
+export default {
+  schema: {
+    listen: {
       events: {
         'schema.changed' (payload: any) {
           outputFileSync(
             `./schemas/${payload.schema.$id}.schema.json`,
             JSON.stringify(payload.schema, null, 2),
           )
+        },
+        'schema.deleted' (payload: any) {
+          removeSync(`./schemas/${payload.schema.$id}.schema.json`)
         },
       },
       onStart: async (schemas: any) => {
@@ -24,7 +26,7 @@ export default defineConfig({
         })
       },
     },
-    projectId: process.env.SOT_PROJECT_ID,
-    token: process.env.SOT_TOKEN,
+    projectId: process.env.BLUE_SCHEMA_PROJECT_ID,
+    token: process.env.BLUE_SCHEMA_TOKEN,
   },
-})
+}

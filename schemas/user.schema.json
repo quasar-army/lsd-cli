@@ -10,9 +10,9 @@
       "description": "Users name",
       "component": "longInput"
     },
-    "title": {
+    "fdghfd": {
       "type": "string",
-      "label": "Title",
+      "label": "fgjhgf",
       "description": "Your wildest dreams...",
       "component": "input"
     },

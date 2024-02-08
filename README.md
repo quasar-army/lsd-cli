@@ -1,245 +1,109 @@
-oclif-hello-world
-=================
+# Blue CLI
+Blue CLI is used to sync your schema.blue schema, with your local development environment.
+It uses websockets, which means it can respond to changes immediately!
 
-oclif example Hello World CLI
+You make a change to you schema. that change shows up in your project.
 
-[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![CircleCI](https://circleci.com/gh/oclif/hello-world/tree/main.svg?style=shield)](https://circleci.com/gh/oclif/hello-world/tree/main)
-[![GitHub license](https://img.shields.io/github/license/oclif/hello-world)](https://github.com/oclif/hello-world/blob/main/LICENSE)
+And it's not just for syncing the schema. The Blue CLI provides hooks so we can generate classes, migrations, models etc the moment we make changes!
 
-<!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
-<!-- tocstop -->
-# Usage
-<!-- usage -->
-```sh-session
-$ npm install -g oclif-hello-world
-$ oex COMMAND
-running command...
-$ oex (--version)
-oclif-hello-world/0.0.0 darwin-x64 node-v16.13.1
-$ oex --help [COMMAND]
-USAGE
-  $ oex COMMAND
-...
-```
-<!-- usagestop -->
-# Commands
-<!-- commands -->
-* [`oex hello PERSON`](#oex-hello-person)
-* [`oex hello world`](#oex-hello-world)
-* [`oex help [COMMAND]`](#oex-help-command)
-* [`oex plugins`](#oex-plugins)
-* [`oex plugins:inspect PLUGIN...`](#oex-pluginsinspect-plugin)
-* [`oex plugins:install PLUGIN...`](#oex-pluginsinstall-plugin)
-* [`oex plugins:link PLUGIN`](#oex-pluginslink-plugin)
-* [`oex plugins:uninstall PLUGIN...`](#oex-pluginsuninstall-plugin)
-* [`oex plugins update`](#oex-plugins-update)
+You can explore the [Modular Quasar Template](https://github.com/quasar-army/modular-quasar-template) to see how Blue CLI can be used for rapid, robust development.
 
-## `oex hello PERSON`
-
-Say hello
-
-```
-USAGE
-  $ oex hello [PERSON] -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
-
-DESCRIPTION
-  Say hello
-
-EXAMPLES
-  $ oex hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
+## Install
+locally:
+```sh
+pnpm install @quasar-army/blue-cli
 ```
 
-_See code: [dist/commands/hello/index.ts](https://github.com/oclif/hello-world/blob/v0.0.0/dist/commands/hello/index.ts)_
-
-## `oex hello world`
-
-Say hello world
-
-```
-USAGE
-  $ oex hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ oex hello world
-  hello world! (./src/commands/hello/world.ts)
+globally (The blue standard uses npm for global dependencies)
+```sh
+pnpm install -G @quasar-army/blue-cli
 ```
 
-## `oex help [COMMAND]`
-
-Display help for oex.
-
-```
-USAGE
-  $ oex help [COMMAND] [-n]
-
-ARGUMENTS
-  COMMAND  Command to show help for.
-
-FLAGS
-  -n, --nested-commands  Include all nested commands in the output.
-
-DESCRIPTION
-  Display help for oex.
+We can now listen for changes with `blue listen`. We'll likely want to add this to our package.json
+```json
+{
+  "scripts": {
+    "blue:listen": "blue listen"
+  }
+}
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.10/src/commands/help.ts)_
+Now let's see how we can react to changes in our schema...
 
-## `oex plugins`
+## Configuration
 
-List installed plugins.
+Blue provides hooks that allow us to **immediately** react to changes in the schema!
+```ts
+import { config as configureEnv } from 'dotenv'
 
-```
-USAGE
-  $ oex plugins [--core]
+configureEnv()
 
-FLAGS
-  --core  Show core plugins.
-
-DESCRIPTION
-  List installed plugins.
-
-EXAMPLES
-  $ oex plugins
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.0.11/src/commands/plugins/index.ts)_
-
-## `oex plugins:inspect PLUGIN...`
-
-Displays installation properties of a plugin.
-
-```
-USAGE
-  $ oex plugins:inspect PLUGIN...
-
-ARGUMENTS
-  PLUGIN  [default: .] Plugin to inspect.
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Displays installation properties of a plugin.
-
-EXAMPLES
-  $ oex plugins:inspect myplugin
-```
-
-## `oex plugins:install PLUGIN...`
-
-Installs a plugin into the CLI.
+export default {
+  schema: {
+    projectId: process.env.BLUE_SCHEMA_PROJECT_ID, // Your schema.blue project ID
+    token: process.env.BLUE_SCHEMA_TOKEN, // Your schema.blue token
+    listen: {
+      events: {
+        'schema.changed' (payload: any) {
+          // Here, you might run a generator on the changed schema
+          console.log(payload)
+        },
+        'schema.deleted' (payload: any) {
+          // Here, you could delete all files related to this schema
+          console.log(payload)
+        },
+      },
+      onStart: async (payload: any) => {
+        console.log(payload) // "payload" contains ALL schemas for this project
+      },
+    },
+  },
+}
 
 ```
-USAGE
-  $ oex plugins:install PLUGIN...
 
-ARGUMENTS
-  PLUGIN  Plugin to install.
+## A quick note on architecture
+Files that are built with Blue CLI are constantly changing and therefore **should not be edited**.
 
-FLAGS
-  -f, --force    Run yarn install with force flag.
-  -h, --help     Show CLI help.
-  -v, --verbose
+For that reason, we suggest **extending** those files if you want to add custom functionality.
 
-DESCRIPTION
-  Installs a plugin into the CLI.
+For example, if using models, you may choose to have two folders:
+- `base-models/`
+- `models/`
 
-  Can be installed from npm or a git url.
+Models within `base-models/` would never be touched. Models within `models/` can change.
+Here's an example using PiniaORM:
 
-  Installation of a user-installed plugin will override a core plugin.
+`BaseUser.ts`
+```ts
+import { Model } from 'pinia-orm'
+import { Attr, Uid } from 'pinia-orm/dist/decorators'
 
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
-  the CLI without the need to patch and update the whole CLI.
+export class BaseUser extends Model {
+  static entity = 'users'
+  static primaryKey = 'id'
 
-ALIASES
-  $ oex plugins add
-
-EXAMPLES
-  $ oex plugins:install myplugin 
-
-  $ oex plugins:install https://github.com/someuser/someplugin
-
-  $ oex plugins:install someuser/someplugin
+  // fields
+  @Uid() declare id: string
+  @Attr() declare name: string | null
+  @Attr() declare age: number | null
+  @Attr() declare is_active: boolean | null
+  @Attr() declare date_of_birth_date_time_tz: string | null
+}
 ```
 
-## `oex plugins:link PLUGIN`
+`User.ts`
+```ts
+import { BaseUser } from '../base-models/BaseUser'
 
-Links a plugin into the CLI for development.
-
-```
-USAGE
-  $ oex plugins:link PLUGIN
-
-ARGUMENTS
-  PATH  [default: .] path to plugin
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Links a plugin into the CLI for development.
-
-  Installation of a linked plugin will override a user-installed or core plugin.
-
-  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
-  command will override the user-installed or core plugin implementation. This is useful for development work.
-
-EXAMPLES
-  $ oex plugins:link myplugin
+export class User extends BaseUser {
+  sayHello() {
+    console.log('hello')
+  }
+}
 ```
 
-## `oex plugins:uninstall PLUGIN...`
+Now throughout the project, we would only import `User.ts`, never `BaseUser.ts`. Changes to BaseUser can happen freely and `User.ts` will still have the `sayHello` function.
 
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ oex plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ oex plugins unlink
-  $ oex plugins remove
-```
-
-## `oex plugins update`
-
-Update installed plugins.
-
-```
-USAGE
-  $ oex plugins update [-h] [-v]
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Update installed plugins.
-```
-<!-- commandsstop -->
+### Is this necessary?
+To be clear, we have never had to do this pattern in the Quasar Army. We generated models directly. However if we start running into edge cases, we'll start following this pattern to allow for more flexibility.

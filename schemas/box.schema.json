@@ -1,0 +1,18 @@
+{
+  "$id": "box",
+  "title": "Box",
+  "entity": "boxes",
+  "type": "object",
+  "properties": {
+    "bang": {
+      "type": "string",
+      "label": "Bang",
+      "description": ""
+    },
+    "id": {
+      "type": "string",
+      "label": "ID"
+    }
+  },
+  "primaryKey": "id"
+}
