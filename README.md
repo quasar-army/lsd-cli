@@ -1,5 +1,5 @@
 # Blue CLI
-Blue CLI is used to sync your schema.blue schema, with your local development environment.
+Blue CLI is used to sync your [schema.blue schema](https://schema.blue), with your local development environment.
 It uses websockets, which means it can respond to changes immediately!
 
 You make a change to you schema. that change shows up in your project.
